@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Compression PCA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px auto;
+            max-width: 900px;
+            color: #333;
+        }
+
+        .header-title {
+            text-align: center;
+            font-weight: normal;
+            font-size: 24px;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .divider {
+            border: 0;
+            border-top: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+        
+        .input-section h3 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+
+        .form-row {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-row input[type="number"] {
+            width: 50px;
+            text-align: center;
+        }
+
+        .submit-btn {
+            margin-top: 10px;
+            padding: 4px 12px;
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+        
+        .submit-btn:hover { background-color: #e2e6ea; }
+
+        .image-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            margin-bottom: 20px;
+        }
+
+        .image-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image-box span {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .image-display {
+            background-color: #eaf1ed;
+            border: 1px solid #eaf1ed;
+            height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .image-display img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .footer-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .metrics p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .download-btn {
+            padding: 6px 16px;
+            border: 1px solid #adb5bd;
+            background-color: white;
+            cursor: pointer;
+            border-radius: 2px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: black;
+        }
+
+        .download-btn:hover {
+            background-color: #f1f3f5;
+        }
+        
+        a { text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <h2 class="header-title">Image Compression</h2>
+    <hr class="divider">
+
+    <div class="input-section">
+        <h3>Input Your Image</h3>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-row">
+                <input type="file" name="image" accept="image/*" required>
+            </div>
+            <div class="form-row">
+                <label>Image Compression Rate</label>
+                [ <input type="number" name="n_components" value="50" min="1" required> ] %
+            </div>
+            <button type="submit" class="submit-btn">Process</button>
+        </form>
+    </div>
+
+    <div class="image-container">
+        <div class="image-box">
+            <span>Before</span>
+            <div class="image-display">
+                {% if input_img %}
+                    <img src="{{ input_img }}" alt="Original Image">
+                {% else %}
+                    <span style="color: #999; font-size: 50px;">&#128247;</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="image-box">
+            <span>After</span>
+            <div class="image-display">
+                {% if output_img %}
+                    <img src="{{ output_img }}" alt="Compressed Image">
+                {% else %}
+                    <span style="color: #999; font-size: 50px;">&#128247;</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if input_img %}
+    <div class="footer-section">
+        <div class="metrics">
+            <p>Image pixel difference percentage: <strong>{{ comp_pct }} %</strong></p>
+            <p>Image compression time: <strong>{{ runtime }} seconds</strong></p>
+        </div>
+        
+        <div>
+            <a href="{{ download_url }}">
+                <button class="download-btn">Download <span>&darr;</span></button>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+</body>
+</html>
