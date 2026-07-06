@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Compression Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream: #FFF9E6;
+            --pale: #E3F1FB;
+            --sky: #C1E4F3;
+            --mid: #A8D0EF;
+            --deep: #99C3E4;
+            --ink: #2E4258;
+            --ink-soft: #5A7086;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 48px 20px 70px;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 8% 0%, var(--pale) 0%, transparent 45%),
+                radial-gradient(circle at 100% 10%, var(--sky) 0%, transparent 40%),
+                #fbfdff;
+            min-height: 100vh;
+        }
+
+        .page {
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        .hero {
+            position: relative;
+            text-align: center;
+            padding: 34px 20px 40px;
+            margin-bottom: 34px;
+            border-radius: 28px;
+            background: linear-gradient(160deg, var(--mid) 0%, var(--deep) 100%);
+            overflow: hidden;
+            box-shadow: 0 14px 30px -14px rgba(90, 140, 190, 0.55);
+        }
+
+        .hex-field {
+            position: absolute;
+            inset: 0;
+            opacity: 0.18;
+            background-image:
+                repeating-linear-gradient(60deg, transparent 0 26px, rgba(255,255,255,0.5) 26px 27px),
+                repeating-linear-gradient(-60deg, transparent 0 26px, rgba(255,255,255,0.5) 26px 27px);
+            background-size: 60px 104px;
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.85);
+            color: var(--ink);
+            font-weight: 700;
+            font-size: 12.5px;
+            letter-spacing: 0.4px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            margin-bottom: 14px;
+        }
+
+        .hero h1 {
+            position: relative;
+            font-family: 'Baloo 2', sans-serif;
+            font-weight: 700;
+            font-size: 34px;
+            margin: 0 0 8px;
+            color: #ffffff;
+            text-shadow: 0 2px 0 rgba(0,0,0,0.06);
+        }
+
+        .hero p {
+            position: relative;
+            margin: 0 auto;
+            max-width: 480px;
+            font-size: 15px;
+            color: rgba(255,255,255,0.92);
+            font-weight: 600;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 22px;
+            padding: 28px 30px;
+            margin-bottom: 28px;
+            border: 1px solid var(--sky);
+            box-shadow: 0 10px 24px -18px rgba(60, 90, 130, 0.35);
+        }
+
+        .card h3 {
+            font-family: 'Baloo 2', sans-serif;
+            font-size: 20px;
+            margin: 0 0 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3 .hex-icon {
+            width: 26px;
+            height: 26px;
+            flex-shrink: 0;
+        }
+
+        .card .sub {
+            font-size: 13.5px;
+            color: var(--ink-soft);
+            margin: 0 0 20px;
+            font-weight: 600;
+        }
+
+        .dropzone {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border: 2px dashed var(--mid);
+            background: var(--pale);
+            border-radius: 16px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .dropzone:hover {
+            background: var(--sky);
+            border-color: var(--deep);
+        }
+
+        .dropzone .icon-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--deep);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .dropzone .text strong {
+            display: block;
+            font-size: 14.5px;
+            color: var(--ink);
+        }
+
+        .dropzone .text span {
+            font-size: 12.5px;
+            color: var(--ink-soft);
+            font-weight: 600;
+        }
+
+        .dropzone input[type="file"] {
+            display: none;
+        }
+
+        #file-name {
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--deep);
+            display: none;
+        }
+
+        .slider-row {
+            margin-top: 26px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .pct-pill {
+            background: var(--cream);
+            border: 1px solid #f1e4bb;
+            color: #8a6d1f;
+            padding: 3px 12px;
+            border-radius: 999px;
+            font-family: 'Baloo 2', sans-serif;
+            font-size: 15px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--mid), var(--sky));
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--deep);
+            border: 3px solid #ffffff;
+            box-shadow: 0 2px 8px rgba(60, 90, 130, 0.45);
+            cursor: pointer;
+            margin-top: -1px;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--deep);
+            border: 3px solid #ffffff;
+            box-shadow: 0 2px 8px rgba(60, 90, 130, 0.45);
+            cursor: pointer;
+        }
+
+        .tick-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--ink-soft);
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        .hint {
+            margin-top: 12px;
+            font-size: 12.5px;
+            color: var(--ink-soft);
+            background: var(--pale);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-weight: 600;
+        }
+
+        .submit-btn {
+            margin-top: 24px;
+            width: 100%;
+            padding: 14px;
+            font-family: 'Baloo 2', sans-serif;
+            font-size: 17px;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, var(--mid), var(--deep));
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px -10px rgba(80, 130, 180, 0.6);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 24px -10px rgba(80, 130, 180, 0.7);
+        }
+
+        .submit-btn:active { transform: translateY(0); }
+
+        .compare-wrap {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .image-box {
+            flex: 1;
+            min-width: 240px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image-box .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            width: fit-content;
+            font-family: 'Baloo 2', sans-serif;
+            font-size: 13.5px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 999px;
+            margin-bottom: 10px;
+        }
+
+        .image-box.before .tag { background: var(--pale); color: var(--ink); }
+        .image-box.after .tag { background: var(--cream); color: #8a6d1f; }
+
+        .image-display {
+            position: relative;
+            background: repeating-conic-gradient(var(--pale) 0% 25%, #eef6fc 0% 50%) 0 0/24px 24px;
+            border: 2px solid var(--sky);
+            border-radius: 18px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .image-display img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .placeholder-icon {
+            color: var(--deep);
+            font-size: 46px;
+            opacity: 0.6;
+        }
+
+        .results-card {
+            background: linear-gradient(135deg, #ffffff, var(--pale));
+        }
+
+        .footer-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .metrics {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .metric-chip {
+            background: #ffffff;
+            border: 1px solid var(--sky);
+            border-radius: 14px;
+            padding: 10px 18px;
+            min-width: 170px;
+        }
+
+        .metric-chip .label {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--ink-soft);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .metric-chip .value {
+            font-family: 'Baloo 2', sans-serif;
+            font-size: 21px;
+            color: var(--ink);
+            margin-top: 2px;
+        }
+
+        .download-btn {
+            padding: 12px 22px;
+            border: none;
+            background: linear-gradient(135deg, var(--mid), var(--deep));
+            color: #fff;
+            cursor: pointer;
+            border-radius: 12px;
+            font-size: 14.5px;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 18px -10px rgba(80, 130, 180, 0.6);
+        }
+
+        .download-btn:hover { filter: brightness(1.05); }
+
+        a { text-decoration: none; }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 26px; }
+            .card { padding: 22px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page">
+
+        <div class="hero">
+            <div class="hex-field"></div>
+            <span class="hero-badge">⬡ PCA</span>
+            <h1>Image Compression</h1>
+            <p>A web-based application for efficient photo compression using the Principal Component Analysis (PCA) method.</p>
+        </div>
+
+        <div class="card">
+            <h3>
+                <svg class="hex-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L21 7V17L12 22L3 17V7L12 2Z" fill="#A8D0EF" stroke="#99C3E4" stroke-width="1.5"/>
+                </svg>
+                Input Your Image
+            </h3>
+            <p class="sub">Drop a picture in below and choose your compression rate.</p>
+
+            <form method="POST" enctype="multipart/form-data">
+                <label class="dropzone" for="image-input">
+                    <span class="icon-circle">⬆</span>
+                    <span class="text">
+                        <strong>Click to choose an image</strong>
+                        <span>PNG, JPG or WEBP</span>
+                    </span>
+                    <input type="file" id="image-input" name="image" accept="image/*" required
+                           onchange="document.getElementById('file-name').style.display='block'; document.getElementById('file-name').innerText='Selected: ' + this.files[0].name;">
+                </label>
+                <div id="file-name"></div>
+
+                <div class="slider-row">
+                    <div class="slider-label">
+                        <span>Image Compression Rate</span>
+                        <span class="pct-pill"><span id="pct-value">50</span>%</span>
+                    </div>
+                    <input type="range" name="n_components" min="1" max="100" value="50"
+                           oninput="document.getElementById('pct-value').innerText = this.value">
+                    <div class="tick-row">
+                        <span>1% · smallest file</span>
+                        <span>100% · full quality</span>
+                    </div>
+                    <div class="hint">💡 Lower values shrink the file more but keep less detail. 50% is a good place to start.</div>
+                </div>
+
+                <button type="submit" class="submit-btn">Process Image ⬡</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3>
+                <svg class="hex-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L21 7V17L12 22L3 17V7L12 2Z" fill="#FFF9E6" stroke="#99C3E4" stroke-width="1.5"/>
+                </svg>
+                Preview
+            </h3>
+            <p class="sub">Compare the original and the compressed result side by side.</p>
+
+            <div class="compare-wrap">
+                <div class="image-box before">
+                    <span class="tag">⬡ Before</span>
+                    <div class="image-display">
+                        {% if input_img %}
+                            <img src="{{ input_img }}" alt="Original Image">
+                        {% else %}
+                            <span class="placeholder-icon">&#128247;</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="image-box after">
+                    <span class="tag">⬡ After</span>
+                    <div class="image-display">
+                        {% if output_img %}
+                            <img src="{{ output_img }}" alt="Compressed Image">
+                        {% else %}
+                            <span class="placeholder-icon">&#128247;</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if input_img %}
+        <div class="card results-card">
+            <h3>
+                <svg class="hex-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L21 7V17L12 22L3 17V7L12 2Z" fill="#A8D0EF" stroke="#99C3E4" stroke-width="1.5"/>
+                </svg>
+                Results
+            </h3>
+            <div class="footer-section">
+                <div class="metrics">
+                    <div class="metric-chip">
+                        <div class="label">Pixel Difference</div>
+                        <div class="value">{{ comp_pct }}%</div>
+                    </div>
+                    <div class="metric-chip">
+                        <div class="label">Processing Time</div>
+                        <div class="value">{{ runtime }}s</div>
+                    </div>
+                </div>
+
+                <a href="{{ download_url }}">
+                    <button class="download-btn">Download <span>&darr;</span></button>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+</body>
+</html>
