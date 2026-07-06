@@ -116,7 +116,7 @@ Proyek ini dikembangkan untuk tugas Aljabar Linear — Program Studi Informatika
 | Syifa Kaila Putri | L0125068 |
 | Rolland William Yohanes George | L0125113 |
 
-**Dosen Pengampu:** Drs. Bambang Harjito, M.App.Sc., Ph.D.
+**Dosen Pengampu:** Prof. Drs. Bambang Harjito, M.App.Sc., Ph.D.
 
 ---
 
